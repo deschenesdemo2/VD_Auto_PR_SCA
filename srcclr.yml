@@ -3,6 +3,6 @@
 ###
 
 #Scan Directives for Update Advisor and Auto-pull Request
-pr_on: Low
+pr_on: low
 no_breaking_updates: true
 ignore_closed_prs: true
