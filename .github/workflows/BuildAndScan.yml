@@ -1,3 +1,4 @@
+Name: Build And Scan
 - uses: actions/setup-java@v1 # Make java accessible on path so the uploadandscan action can run.
   with: 
     java-version: '8'
