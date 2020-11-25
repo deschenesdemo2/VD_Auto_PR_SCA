@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -18,17 +17,12 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-      
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/setup-java@v1 # Make java accessible on path so the uploadandscan action can run.
-      with: 
-        java-version: '8'
     - uses: actions/upload-artifact@v2 # Copy files from repository to docker container so the next uploadandscan action can access them.
+    - name: Upload Artifact  
       with:
         path: folder_to_upload/*.war # Wildcards can be used to filter the files copied into the container. See: https://github.com/actions/upload-artifact
     - uses: veracode/veracode-uploadandscan-action@master # Run the uploadandscan action. Inputs are described above.
+    - name: Veracode Upload and Scan
       with:
         filepath: 'folder_to_upload/'
         vid: '${{ secrets.VERACODE_API_ID }}'
