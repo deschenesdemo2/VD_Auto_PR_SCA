@@ -17,12 +17,14 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+      env: 
+        folder_to_upload: '/home/runner/work/Verademo/Verademo/target/'
     - uses: actions/upload-artifact@v2 # Copy files from repository to docker container so the next uploadandscan action can access them. 
       with:
-        path: folder_to_upload/*.war # Wildcards can be used to filter the files copied into the container. See: https://github.com/actions/upload-artifact
+        path: $folder_to_upload/*.war # Wildcards can be used to filter the files copied into the container. See: https://github.com/actions/upload-artifact
     - uses: veracode/veracode-uploadandscan-action@master # Run the uploadandscan action. Inputs are described above.
       with:
-        filepath: 'folder_to_upload/'
+        filepath: $folder_to_upload
         vid: '${{ secrets.VERACODE_API_ID }}'
         vkey: '${{ secrets.VERACODE_API_KEY }}'
         createsandbox: 'true'
