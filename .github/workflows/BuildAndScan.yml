@@ -27,7 +27,7 @@ jobs:
         vkey: '${{ secrets.VERACODE_API_KEY }}'
         createsandbox: 'true'
         sandboxname: 'GH Actions'
-        scantimeout: 15
+        scantimeout: 20
         exclude: '*.js'
         include: '*.war'
         criticality: 'VeryHigh'
