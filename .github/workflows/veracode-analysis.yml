@@ -59,7 +59,7 @@ jobs:
         name: ScanResults
         path: results.json
         
-  Convert output:
+  Convert_output:
    needs: Veracode_Pipeline_Scan
    runs-on: ubuntu-latest
    steps:        
