@@ -60,7 +60,7 @@ jobs:
         path: results.json
         
   Convert output:
-   needs: Veracode_Pipeline_Scan:
+   needs: Veracode_Pipeline_Scan
    runs-on: ubuntu-latest
    steps:        
     - name: Convert pipeline scan output to SARIF format
