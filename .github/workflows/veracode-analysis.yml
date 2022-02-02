@@ -39,10 +39,10 @@ jobs:
 ##        recursive: true
 ##        dest: veracode-pipeline-scan-results-to-sarif.zip
 
-    - uses: actions/upload-artifact@v1
-      with:
-        name: my-artifact
-        path: veracode-pipeline-scan-results-to-sarif.zip
+##    - uses: actions/upload-artifact@v1
+##      with:
+##        name: my-artifact
+##        path: veracode-pipeline-scan-results-to-sarif.zip
 
     # download the Veracode Static Analysis Pipeline scan jar
   Veracode_Pipeline_Scan:
