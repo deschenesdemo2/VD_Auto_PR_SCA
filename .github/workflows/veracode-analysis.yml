@@ -54,7 +54,7 @@ jobs:
         args: -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
     - run: unzip -o pipeline-scan-LATEST.zip
 
-    -  uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v2
       with:
         name: verademo.war
         path: /tmp
