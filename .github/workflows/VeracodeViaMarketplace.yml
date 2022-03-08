@@ -59,8 +59,8 @@ jobs:
         createsandbox: true
         # name of the sandbox
         sandboxname: GHviaMarketplace
-#         # wait X minutes for the scan to complete
-#         scantimeout: 60
+        # wait X minutes for the scan to complete
+        scantimeout: 60
 #         # modules to exclude from module selection
 #         exclude: # optional
 #         # modules to include in module selection
