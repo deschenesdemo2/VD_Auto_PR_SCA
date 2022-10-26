@@ -63,7 +63,6 @@ jobs:
         path: results.json
         
   Veracode_Agent_Based_SCA:
-   needs: build
    runs-on: ubuntu-latest
    env: 
       SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
@@ -80,7 +79,7 @@ jobs:
         # A git URL to work with in case the scan is not for the current repository
         url: https://github.com/cdalomba/Verademo
         # The maximum allowed cvss in found vulnerabilities to pass the step
-        fail-on-cvss: 10    # optional, default is 10
+        fail-on-cvss: 5   # optional, default is 10
         # A path within the repository where the build definition starts
         path: .   # optional, default is .
         # Run the SRCCLR in debug mode
