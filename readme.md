@@ -1,4 +1,4 @@
-# VeraDemo - Blab-a-Gag - CDalomba
+# VeraDemo - Blab-a-Gag - CDalomba's clone
 
 ## About
 
