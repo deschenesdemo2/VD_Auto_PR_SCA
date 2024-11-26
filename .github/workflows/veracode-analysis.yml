@@ -10,7 +10,6 @@ on:
     - cron: '17 5 * * 2'
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
@@ -26,12 +25,11 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: verademo.war
           path: target/verademo.war
 
-  # Veracode Static Analysis Pipeline Scan job
   Veracode_Pipeline_Scan:
     needs: build
     runs-on: ubuntu-latest
@@ -45,7 +43,7 @@ jobs:
         run: unzip -o pipeline-scan-LATEST.zip
 
       - name: Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.2
         with:
           name: verademo.war
           path: /tmp
@@ -64,12 +62,11 @@ jobs:
         continue-on-error: true
 
       - name: Upload scan results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: ScanResults
           path: results.json
 
-  # Veracode Agent-Based SCA job
   Veracode_Agent_Based_SCA:
     runs-on: ubuntu-latest
     env:
@@ -85,13 +82,12 @@ jobs:
           path: .
           debug: false
 
-  # Convert pipeline scan output to SARIF format and upload as a Code Scanning alert
   Convert_output:
     needs: Veracode_Pipeline_Scan
     runs-on: ubuntu-latest
     steps:
       - name: Download scan results artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.2
         with:
           name: ScanResults
           path: /tmp
