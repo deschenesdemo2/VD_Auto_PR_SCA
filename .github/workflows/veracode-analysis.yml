@@ -1,11 +1,9 @@
-# This workflow will initiate a Veracode Static Analysis Pipeline scan, return a results.json, and convert to SARIF for upload as a code scanning alert
-
 name: Veracode Static Analysis Pipeline Scan + Agent SCA
 
 on:
   workflow_dispatch:
   pull_request:
-    branches: [master, '*']
+    branches: [ master, '*' ]
   schedule:
     - cron: '17 5 * * 2'
 
@@ -13,92 +11,76 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v2
 
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v3
-        with:
-          java-version: 1.8
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+        
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: verademo.war
-          path: target/verademo.war
+    - uses: actions/upload-artifact@v3  # Updated to v3
+      with:
+        name: verademo.war
+        path: target/verademo.war
 
   Veracode_Pipeline_Scan:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download pipeline scan jar
-        uses: wei/curl@master
-        with:
-          args: -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
+    - uses: wei/curl@master
+      with:
+        args: -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
+    - run: unzip -o pipeline-scan-LATEST.zip
 
-      - name: Unzip pipeline scan package
-        run: unzip -o pipeline-scan-LATEST.zip
+    - uses: actions/download-artifact@v2
+      with:
+        name: verademo.war
+        path: /tmp
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v3.1.2
-        with:
-          name: verademo.war
-          path: /tmp
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - run: java -jar pipeline-scan.jar --veracode_api_id '${{secrets.VERACODE_API_ID}}' --veracode_api_key '${{secrets.VERACODE_API_KEY}}' --fail_on_severity="Very High, High" --file /tmp/verademo.war
+      continue-on-error: True
 
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v3
-        with:
-          java-version: 1.8
-
-      - name: Run Veracode Pipeline Scan
-        run: java -jar pipeline-scan.jar \
-          --veracode_api_id '${{ secrets.VERACODE_API_ID }}' \
-          --veracode_api_key '${{ secrets.VERACODE_API_KEY }}' \
-          --fail_on_severity="Very High, High" \
-          --file /tmp/verademo.war
-        continue-on-error: true
-
-      - name: Upload scan results
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: ScanResults
-          path: results.json
+    - uses: actions/upload-artifact@v3  # Updated to v3
+      with:
+        name: ScanResults
+        path: results.json
 
   Veracode_Agent_Based_SCA:
     runs-on: ubuntu-latest
-    env:
+    env: 
       SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
     steps:
-      - name: Veracode Dependency Scanning
-        uses: veracode/veracode-sca@v1.09
-        with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          update_advisor: true
-          url: https://github.com/deschenesdemo2/VD_Auto_PR_SCA
-          fail-on-cvss: 5
-          path: .
-          debug: false
+    - name: Veracode Dependency Scanning
+      uses: veracode/veracode-sca@v1.09
+      with:
+        github_token: ${{ secrets.GH_TOKEN }}
+        update_advisor: TRUE
+        url: https://github.com/deschenesdemo2/VD_Auto_PR_SCA
+        fail-on-cvss: 5
+        path: .
+        debug: FALSE
 
   Convert_output:
     needs: Veracode_Pipeline_Scan
     runs-on: ubuntu-latest
     steps:
-      - name: Download scan results artifact
-        uses: actions/download-artifact@v3.1.2
-        with:
-          name: ScanResults
-          path: /tmp
-
-      - name: Convert pipeline scan output to SARIF format
-        id: convert
-        uses: veracode/veracode-pipeline-scan-results-to-sarif@master
-        with:
-          pipeline-results-json: /tmp/results.json
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: veracode-results.sarif
+    - uses: actions/download-artifact@v2
+      with:
+        name: ScanResults
+        path: /tmp
+        
+    - name: Convert pipeline scan output to SARIF format
+      id: convert
+      uses: veracode/veracode-pipeline-scan-results-to-sarif@master
+      with:
+        pipeline-results-json: /tmp/results.json
+        
+    - uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: veracode-results.sarif
