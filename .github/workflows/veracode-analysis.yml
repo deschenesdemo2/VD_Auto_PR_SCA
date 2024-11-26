@@ -73,11 +73,11 @@ jobs:
       uses: veracode/veracode-sca@v1.09
       with:
         # Authorization token to query and create issues
-        github_token: ${{ secrets.GHACTION_TOKEN_SECRET }}
+        github_token: ${{ secrets.GH_TOKEN }}
         # Show update advisor
         update_advisor: TRUE
         # A git URL to work with in case the scan is not for the current repository
-        url: https://github.com/cdalomba/Verademo
+        url: https://github.com/deschenesdemo2/VD_Auto_PR_SCA
         # The maximum allowed cvss in found vulnerabilities to pass the step
         fail-on-cvss: 5   # optional, default is 10
         # A path within the repository where the build definition starts
